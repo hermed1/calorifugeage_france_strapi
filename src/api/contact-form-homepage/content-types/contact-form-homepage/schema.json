@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_form_homepages",
+  "info": {
+    "singularName": "contact-form-homepage",
+    "pluralName": "contact-form-homepages",
+    "displayName": "contact form homepage"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "raison_sociale": {
+      "type": "string",
+      "maxLength": 255,
+      "private": true
+    },
+    "nom": {
+      "type": "string",
+      "maxLength": 255,
+      "private": true
+    },
+    "telephone": {
+      "type": "string",
+      "private": true,
+      "required": true,
+      "maxLength": 20
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "private": true,
+      "maxLength": 254
+    }
+  }
+}
