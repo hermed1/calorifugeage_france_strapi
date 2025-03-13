@@ -11,7 +11,7 @@ module.exports = {
 
     // Ton URL Discord, identique pour afterCreate et afterUpdate
     const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1344613993423175751/uKfWFVKshdKZ72lwlnaq3zA2TT_vw7zu2HNh7sBmPzJ4xP9gD8y7-p2Qak_SF8sFk-x_";
+      "https://discord.com/api/webhooks/1349803873585598505/vBwhB3l8Rh-OXuepVJo55rN0gn-HX6fSHrPErz3zx_9_gkumP2T2nGlUm0bOX0wpgR6L";
 
     // Corps du message
     const message = `
