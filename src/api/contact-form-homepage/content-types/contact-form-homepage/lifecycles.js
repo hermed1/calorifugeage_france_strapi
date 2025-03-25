@@ -6,7 +6,7 @@ module.exports = {
 
     const { result } = event;
     const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1349803873585598505/vBwhB3l8Rh-OXuepVJo55rN0gn-HX6fSHrPErz3zx_9_gkumP2T2nGlUm0bOX0wpgR6L";
+      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
 
     const message = `
 Nouveau formulaire reçu (contact-form-homepage) :
@@ -42,7 +42,7 @@ Nouveau formulaire reçu (contact-form-homepage) :
 
     const { result } = event;
     const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1349803873585598505/vBwhB3l8Rh-OXuepVJo55rN0gn-HX6fSHrPErz3zx_9_gkumP2T2nGlUm0bOX0wpgR6L";
+      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
 
     const message = `
 Formulaire mis à jour (contact-form-homepage) :
