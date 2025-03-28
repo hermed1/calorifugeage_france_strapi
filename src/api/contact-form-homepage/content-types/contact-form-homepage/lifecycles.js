@@ -5,8 +5,7 @@ module.exports = {
     console.log("[afterCreate] contact-form-homepage triggered", event.result);
 
     const { result } = event;
-    const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
+    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     const message = `
 Nouveau formulaire reçu (contact-form-homepage) :
@@ -41,8 +40,7 @@ Nouveau formulaire reçu (contact-form-homepage) :
     console.log("[afterUpdate] contact-form-homepage triggered", event.result);
 
     const { result } = event;
-    const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
+    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     const message = `
 Formulaire mis à jour (contact-form-homepage) :

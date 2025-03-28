@@ -10,9 +10,7 @@ module.exports = {
     const { result } = event;
 
     // Ton URL Discord, identique pour afterCreate et afterUpdate
-    const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
-
+    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
     // Corps du message
     const message = `
 Nouveau formulaire reçu (contact-form) :
@@ -50,8 +48,7 @@ Nouveau formulaire reçu (contact-form) :
 
     const { result } = event;
 
-    const discordWebhookUrl =
-      "https://discord.com/api/webhooks/1354194074319716492/zzFscjbZCgqjPV5XxurDjbSdAikeVPwpZtAXeF29xe_Ex1-OzpfS8-e_IkwrTAUj8wLl";
+    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     const message = `
 Formulaire mis à jour (contact-form) :
