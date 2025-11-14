@@ -2,82 +2,59 @@
 
 const axios = require("axios");
 
-module.exports = {
-  async afterCreate(event) {
-    // Juste pour voir dans les logs si le hook se déclenche
-    console.log("[afterCreate] contact-form triggered");
+const formatValue = (value) => value || "Non renseigné";
 
-    const { result } = event;
+const buildMessage = (result, context) => `
+${context}
 
-    // Ton URL Discord, identique pour afterCreate et afterUpdate
-    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    // Corps du message
-    const message = `
-Nouveau formulaire reçu (contact-form) :
-
-- Raison sociale : ${result.raison_sociale || "Non renseigné"}
-- SIRET : ${result.siret || "Non renseigné"}
-- Nom : ${result.nom || "Non renseigné"}
-- Sexe : ${result.sexe || "Non renseigné"}
-- Message : ${result.message || "Non renseigné"}
-- Horaire R : ${result.horaireR || "Non renseigné"}
-- Horaire R fin : ${result.horaireRfin || "Non renseigné"}
-- Téléphone : ${result.telephone || "Non renseigné"}
-- Email : ${result.email || "Non renseigné"}
+- Raison sociale : ${formatValue(result.raison_sociale)}
+- SIRET : ${formatValue(result.SIRET)}
+- Nom : ${formatValue(result.Nom)}
+- Sexe : ${formatValue(result.Sexe)}
+- Message : ${formatValue(result.Message)}
+- Horaire début : ${formatValue(result.HoraireDebut)}
+- Horaire fin : ${formatValue(result.HoraireFin)}
+- Téléphone : ${formatValue(result.telephone)}
+- Email : ${formatValue(result.email)}
 `;
 
-    try {
-      const response = await axios.post(discordWebhookUrl, {
-        content: message,
-      });
-      console.log(
-        "[afterCreate] Discord webhook envoyé. Statut :",
-        response.status
-      );
-    } catch (error) {
-      console.error("[afterCreate] Erreur Discord :", {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
-    }
+const sendToDiscord = async (message, logPrefix) => {
+  const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
+
+  try {
+    const response = await axios.post(discordWebhookUrl, {
+      content: message,
+    });
+    console.log(`${logPrefix} Discord webhook envoyé. Statut :`, response.status);
+  } catch (error) {
+    console.error(`${logPrefix} Erreur Discord :`, {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  async afterCreate(event) {
+    console.log("[afterCreate] contact-form triggered");
+
+    const message = buildMessage(
+      event.result,
+      "Nouveau formulaire reçu (contact-form) :"
+    );
+
+    await sendToDiscord(message, "[afterCreate]");
   },
 
   async afterUpdate(event) {
     console.log("[afterUpdate] contact-form triggered");
 
-    const { result } = event;
+    const message = buildMessage(
+      event.result,
+      "Formulaire mis à jour (contact-form) :"
+    );
 
-    const discordWebhookUrl = process.env.DISCORD_WEBHOOK_URL;
-
-    const message = `
-Formulaire mis à jour (contact-form) :
-
-- Raison sociale : ${result.raison_sociale || "Non renseigné"}
-- SIRET : ${result.siret || "Non renseigné"}
-- Nom : ${result.nom || "Non renseigné"}
-- Sexe : ${result.sexe || "Non renseigné"}
-- Message : ${result.message || "Non renseigné"}
-- Horaire R : ${result.horaireR || "Non renseigné"}
-- Horaire R fin : ${result.horaireRfin || "Non renseigné"}
-- Téléphone : ${result.telephone || "Non renseigné"}
-- Email : ${result.email || "Non renseigné"}
-`;
-
-    try {
-      const response = await axios.post(discordWebhookUrl, {
-        content: message,
-      });
-      console.log(
-        "[afterUpdate] Discord webhook envoyé. Statut :",
-        response.status
-      );
-    } catch (error) {
-      console.error("[afterUpdate] Erreur Discord :", {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
-    }
+    await sendToDiscord(message, "[afterUpdate]");
   },
 };

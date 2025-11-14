@@ -1015,34 +1015,16 @@ export interface ApiInformationsEligibiliteInformationsEligibilite
       Attribute.SetMinMaxLength<{
         maxLength: 350;
       }>;
-    plansBatiment: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    photosPlafondsCharpente: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    photosCoinsBatiment: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    photosZonesADestratifier: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
-    photosObstaclesInterieurs: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    plansBatiment: Attribute.Media<'files' | 'images', true>;
+    photosPlafondsCharpente: Attribute.Media<'images' | 'files', true>;
+    photosCoinsBatiment: Attribute.Media<'images' | 'files', true>;
+    photosZonesADestratifier: Attribute.Media<'images' | 'files', true>;
+    photosObstaclesInterieurs: Attribute.Media<'images' | 'files', true>;
     photosPlaquesAppareilsChauffage: Attribute.Media<
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
-    photosExterieursBatiment: Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    photosExterieursBatiment: Attribute.Media<'images' | 'files', true>;
     commentaire: Attribute.Text &
       Attribute.SetMinMaxLength<{
         maxLength: 1500;
@@ -1057,6 +1039,38 @@ export interface ApiInformationsEligibiliteInformationsEligibilite
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::informations-eligibilite.informations-eligibilite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUploadChecklistUploadChecklist
+  extends Schema.CollectionType {
+  collectionName: 'upload_checklists';
+  info: {
+    singularName: 'upload-checklist';
+    pluralName: 'upload-checklists';
+    displayName: 'uploadChecklist';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    checklistDocx: Attribute.Media<'files'> & Attribute.Required;
+    photosJointes: Attribute.Media<'images' | 'files', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::upload-checklist.upload-checklist',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::upload-checklist.upload-checklist',
       'oneToOne',
       'admin::user'
     > &
@@ -1085,6 +1099,7 @@ declare module '@strapi/types' {
       'api::contact-form.contact-form': ApiContactFormContactForm;
       'api::contact-form-homepage.contact-form-homepage': ApiContactFormHomepageContactFormHomepage;
       'api::informations-eligibilite.informations-eligibilite': ApiInformationsEligibiliteInformationsEligibilite;
+      'api::upload-checklist.upload-checklist': ApiUploadChecklistUploadChecklist;
     }
   }
 }
