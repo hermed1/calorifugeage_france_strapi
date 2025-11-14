@@ -1,0 +1,248 @@
+{
+  "kind": "collectionType",
+  "collectionName": "informations_eligibilites",
+  "info": {
+    "singularName": "informations-eligibilite",
+    "pluralName": "informations-eligibilites",
+    "displayName": "InformationsEligibilite",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "RaisonSociale": {
+      "type": "string",
+      "required": false,
+      "maxLength": 250
+    },
+    "SIRET": {
+      "type": "string",
+      "maxLength": 14
+    },
+    "AdresseSite": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "NomPrenomSignataire": {
+      "type": "string",
+      "maxLength": 250
+    },
+    "FonctionSignataire": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "TelephoneSignataire": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "emailSignataire": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "Secteur": {
+      "type": "enumeration",
+      "enum": [
+        "Tertiaire",
+        "Industriel"
+      ]
+    },
+    "usageSite": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "typeLocal": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "modeFonctionnement": {
+      "type": "string",
+      "maxLength": 150
+    },
+    "consigneTemperature": {
+      "type": "decimal"
+    },
+    "batimentZonesMultiples": {
+      "type": "boolean",
+      "required": false
+    },
+    "batimentZonesDetails": {
+      "type": "text",
+      "maxLength": 1500
+    },
+    "ageBatiment": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "hauteurMoyenneSousPlafond": {
+      "type": "decimal"
+    },
+    "hauteurMaxSousPlafond": {
+      "type": "decimal"
+    },
+    "longueurLocal": {
+      "type": "decimal"
+    },
+    "largeurLocal": {
+      "type": "decimal"
+    },
+    "surfaceADestratifier": {
+      "type": "decimal"
+    },
+    "volumeTotalZoneADestratifier": {
+      "type": "decimal"
+    },
+    "volumeExlu": {
+      "type": "decimal"
+    },
+    "zoneIdentifieeSurPlan": {
+      "type": "boolean"
+    },
+    "precisionsEventuelles": {
+      "type": "text"
+    },
+    "presenceObstacleHauteur": {
+      "type": "boolean"
+    },
+    "siObstaclesTypeHauteur": {
+      "type": "string"
+    },
+    "typeProductionChauffage": {
+      "type": "string",
+      "maxLength": 400
+    },
+    "nombreChaudieres": {
+      "type": "integer"
+    },
+    "puissanceNominaleParAppareil": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "puissanceTotalaeGeneration": {
+      "type": "decimal"
+    },
+    "typeChauffage": {
+      "type": "enumeration",
+      "enum": [
+        "convectif",
+        "radiatif",
+        "Les deux"
+      ]
+    },
+    "typeAppareilsChauffage": {
+      "type": "string"
+    },
+    "nombreAppareilsParType": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "marqueModeleAppareil": {
+      "type": "string",
+      "maxLength": 1500
+    },
+    "localisationAppareils": {
+      "type": "string",
+      "maxLength": 350
+    },
+    "typeVentilation": {
+      "type": "enumeration",
+      "enum": [
+        "simple_flux",
+        "double_flux",
+        "Aucune"
+      ]
+    },
+    "ventilationPressionMax": {
+      "type": "decimal"
+    },
+    "ventilationDebit": {
+      "type": "decimal"
+    },
+    "modeleDestratPrecis": {
+      "type": "string",
+      "maxLength": 350
+    },
+    "plansBatiment": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosPlafondsCharpente": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosCoinsBatiment": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosZonesADestratifier": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosObstaclesInterieurs": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosPlaquesAppareilsChauffage": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "photosExterieursBatiment": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "commentaire": {
+      "type": "text",
+      "maxLength": 1500
+    }
+  }
+}

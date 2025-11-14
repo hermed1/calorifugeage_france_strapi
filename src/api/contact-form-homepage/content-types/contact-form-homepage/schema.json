@@ -4,7 +4,8 @@
   "info": {
     "singularName": "contact-form-homepage",
     "pluralName": "contact-form-homepages",
-    "displayName": "contact form homepage"
+    "displayName": "contact form homepage",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -32,6 +33,10 @@
       "required": true,
       "private": true,
       "maxLength": 254
+    },
+    "Message": {
+      "type": "text",
+      "maxLength": 1000
     }
   }
 }

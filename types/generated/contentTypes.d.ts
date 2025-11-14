@@ -362,120 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiContactFormContactForm extends Schema.CollectionType {
-  collectionName: 'contact_forms';
-  info: {
-    singularName: 'contact-form';
-    pluralName: 'contact-forms';
-    displayName: 'contact form';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    raison_sociale: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    SIRET: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }>;
-    Nom: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    telephone: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 25;
-      }>;
-    email: Attribute.Email &
-      Attribute.Required &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 254;
-      }>;
-    HoraireDebut: Attribute.String & Attribute.Private;
-    HoraireFin: Attribute.String & Attribute.Private;
-    Message: Attribute.Text &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 1000;
-      }>;
-    Sexe: Attribute.Enumeration<['monsieur', 'madame']> & Attribute.Private;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::contact-form.contact-form',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::contact-form.contact-form',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
-export interface ApiContactFormHomepageContactFormHomepage
-  extends Schema.CollectionType {
-  collectionName: 'contact_form_homepages';
-  info: {
-    singularName: 'contact-form-homepage';
-    pluralName: 'contact-form-homepages';
-    displayName: 'contact form homepage';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    raison_sociale: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    nom: Attribute.String &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    telephone: Attribute.String &
-      Attribute.Required &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }>;
-    email: Attribute.Email &
-      Attribute.Required &
-      Attribute.Private &
-      Attribute.SetMinMaxLength<{
-        maxLength: 254;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::contact-form-homepage.contact-form-homepage',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::contact-form-homepage.contact-form-homepage',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -902,6 +788,282 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiContactFormContactForm extends Schema.CollectionType {
+  collectionName: 'contact_forms';
+  info: {
+    singularName: 'contact-form';
+    pluralName: 'contact-forms';
+    displayName: 'contact form';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    raison_sociale: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    SIRET: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    Nom: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    telephone: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 25;
+      }>;
+    email: Attribute.Email &
+      Attribute.Required &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    HoraireDebut: Attribute.String & Attribute.Private;
+    HoraireFin: Attribute.String & Attribute.Private;
+    Message: Attribute.Text &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1000;
+      }>;
+    Sexe: Attribute.Enumeration<['monsieur', 'madame']> & Attribute.Private;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::contact-form.contact-form',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::contact-form.contact-form',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiContactFormHomepageContactFormHomepage
+  extends Schema.CollectionType {
+  collectionName: 'contact_form_homepages';
+  info: {
+    singularName: 'contact-form-homepage';
+    pluralName: 'contact-form-homepages';
+    displayName: 'contact form homepage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    raison_sociale: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    nom: Attribute.String &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    telephone: Attribute.String &
+      Attribute.Required &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    email: Attribute.Email &
+      Attribute.Required &
+      Attribute.Private &
+      Attribute.SetMinMaxLength<{
+        maxLength: 254;
+      }>;
+    Message: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1000;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::contact-form-homepage.contact-form-homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::contact-form-homepage.contact-form-homepage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInformationsEligibiliteInformationsEligibilite
+  extends Schema.CollectionType {
+  collectionName: 'informations_eligibilites';
+  info: {
+    singularName: 'informations-eligibilite';
+    pluralName: 'informations-eligibilites';
+    displayName: 'InformationsEligibilite';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    RaisonSociale: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 250;
+      }>;
+    SIRET: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 14;
+      }>;
+    AdresseSite: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    NomPrenomSignataire: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 250;
+      }>;
+    FonctionSignataire: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    TelephoneSignataire: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    emailSignataire: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    Secteur: Attribute.Enumeration<['Tertiaire', 'Industriel']>;
+    usageSite: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    typeLocal: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    modeFonctionnement: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }>;
+    consigneTemperature: Attribute.Decimal;
+    batimentZonesMultiples: Attribute.Boolean;
+    batimentZonesDetails: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1500;
+      }>;
+    ageBatiment: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    hauteurMoyenneSousPlafond: Attribute.Decimal;
+    hauteurMaxSousPlafond: Attribute.Decimal;
+    longueurLocal: Attribute.Decimal;
+    largeurLocal: Attribute.Decimal;
+    surfaceADestratifier: Attribute.Decimal;
+    volumeTotalZoneADestratifier: Attribute.Decimal;
+    volumeExlu: Attribute.Decimal;
+    zoneIdentifieeSurPlan: Attribute.Boolean;
+    precisionsEventuelles: Attribute.Text;
+    presenceObstacleHauteur: Attribute.Boolean;
+    siObstaclesTypeHauteur: Attribute.String;
+    typeProductionChauffage: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 400;
+      }>;
+    nombreChaudieres: Attribute.Integer;
+    puissanceNominaleParAppareil: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    puissanceTotalaeGeneration: Attribute.Decimal;
+    typeChauffage: Attribute.Enumeration<['convectif', 'radiatif', 'Les deux']>;
+    typeAppareilsChauffage: Attribute.String;
+    nombreAppareilsParType: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 500;
+      }>;
+    marqueModeleAppareil: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1500;
+      }>;
+    localisationAppareils: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 350;
+      }>;
+    typeVentilation: Attribute.Enumeration<
+      ['simple_flux', 'double_flux', 'Aucune']
+    >;
+    ventilationPressionMax: Attribute.Decimal;
+    ventilationDebit: Attribute.Decimal;
+    modeleDestratPrecis: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 350;
+      }>;
+    plansBatiment: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosPlafondsCharpente: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosCoinsBatiment: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosZonesADestratifier: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosObstaclesInterieurs: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosPlaquesAppareilsChauffage: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    photosExterieursBatiment: Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    commentaire: Attribute.Text &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1500;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::informations-eligibilite.informations-eligibilite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::informations-eligibilite.informations-eligibilite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -912,8 +1074,6 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::contact-form.contact-form': ApiContactFormContactForm;
-      'api::contact-form-homepage.contact-form-homepage': ApiContactFormHomepageContactFormHomepage;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
@@ -922,6 +1082,9 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::contact-form.contact-form': ApiContactFormContactForm;
+      'api::contact-form-homepage.contact-form-homepage': ApiContactFormHomepageContactFormHomepage;
+      'api::informations-eligibilite.informations-eligibilite': ApiInformationsEligibiliteInformationsEligibilite;
     }
   }
 }
