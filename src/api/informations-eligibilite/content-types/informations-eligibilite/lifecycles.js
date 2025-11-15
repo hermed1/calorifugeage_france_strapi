@@ -135,6 +135,10 @@ module.exports = {
     try {
       console.log("[afterCreate] Préparation de l'email...");
 
+      // IMPORTANT: Attendre 3 secondes pour que Strapi finisse de sauvegarder les médias
+      console.log("[afterCreate] Attente de 3 secondes pour la sauvegarde des médias...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
       // IMPORTANT: Récupérer l'entrée complète avec les médias populés
       const fullEntry = await strapi.entityService.findOne(
         "api::informations-eligibilite.informations-eligibilite",
@@ -162,6 +166,13 @@ module.exports = {
         photosPlaquesAppareilsChauffage: fullEntry.photosPlaquesAppareilsChauffage?.length || 0,
         photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
       });
+
+      // DEBUG: Afficher le premier fichier si présent
+      if (fullEntry.plansBatiment && fullEntry.plansBatiment.length > 0) {
+        console.log("[afterCreate] Premier fichier plansBatiment:", JSON.stringify(fullEntry.plansBatiment[0], null, 2));
+      } else {
+        console.log("[afterCreate] ⚠️ AUCUN média trouvé ! Vérifiez que les fichiers sont bien uploadés depuis le frontend.");
+      }
 
       // Construire le HTML de l'email
       const htmlContent = buildEmailHTML(fullEntry);
