@@ -135,11 +135,33 @@ module.exports = {
     try {
       console.log("[afterCreate] Préparation de l'email...");
 
+      // IMPORTANT: Récupérer l'entrée complète avec les médias populés
+      const fullEntry = await strapi.entityService.findOne(
+        "api::informations-eligibilite.informations-eligibilite",
+        result.id,
+        {
+          populate: "*",
+        }
+      );
+
+      console.log("[afterCreate] Entrée complète récupérée avec médias:", {
+        id: fullEntry.id,
+        plansBatiment: fullEntry.plansBatiment?.length || 0,
+        photosPlafondsCharpente: fullEntry.photosPlafondsCharpente?.length || 0,
+        photosCoinsBatiment: fullEntry.photosCoinsBatiment?.length || 0,
+        photosZonesADestratifier: fullEntry.photosZonesADestratifier?.length || 0,
+        photosObstaclesInterieurs: fullEntry.photosObstaclesInterieurs?.length || 0,
+        photosPlaquesAppareilsChauffage: fullEntry.photosPlaquesAppareilsChauffage?.length || 0,
+        photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
+      });
+
       // Construire le HTML de l'email
-      const htmlContent = buildEmailHTML(result);
+      const htmlContent = buildEmailHTML(fullEntry);
 
       // Préparer les pièces jointes
-      const attachments = prepareAttachments(result);
+      const attachments = prepareAttachments(fullEntry);
+
+      console.log(`[afterCreate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
 
       // Envoyer l'email
       await sendEmail({

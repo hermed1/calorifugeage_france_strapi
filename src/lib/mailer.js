@@ -328,7 +328,7 @@ function buildEmailHTML(formData) {
   </div>
 
   <div class="footer">
-    <p>Ce formulaire a été soumis via le site Réseau-CEE</p>
+    <p>Ce formulaire a été soumis via le site ECO-CEE.fr</p>
     <p>Date de réception : ${new Date().toLocaleString("fr-FR")}</p>
   </div>
 </body>
