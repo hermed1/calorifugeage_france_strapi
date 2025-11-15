@@ -131,79 +131,8 @@ module.exports = {
     );
     await sendToDiscord(message, "[afterCreate]");
 
-    // 2. Envoi de l'email avec Nodemailer
-    try {
-      console.log("[afterCreate] Préparation de l'email...");
-
-      // IMPORTANT: Attendre 3 secondes pour que Strapi finisse de sauvegarder les médias
-      console.log("[afterCreate] Attente de 3 secondes pour la sauvegarde des médias...");
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // IMPORTANT: Récupérer l'entrée complète avec les médias populés
-      const fullEntry = await strapi.entityService.findOne(
-        "api::informations-eligibilite.informations-eligibilite",
-        result.id,
-        {
-          populate: {
-            plansBatiment: true,
-            photosPlafondsCharpente: true,
-            photosCoinsBatiment: true,
-            photosZonesADestratifier: true,
-            photosObstaclesInterieurs: true,
-            photosPlaquesAppareilsChauffage: true,
-            photosExterieursBatiment: true,
-          },
-        }
-      );
-
-      console.log("[afterCreate] Entrée complète récupérée avec médias:", {
-        id: fullEntry.id,
-        plansBatiment: fullEntry.plansBatiment?.length || 0,
-        photosPlafondsCharpente: fullEntry.photosPlafondsCharpente?.length || 0,
-        photosCoinsBatiment: fullEntry.photosCoinsBatiment?.length || 0,
-        photosZonesADestratifier: fullEntry.photosZonesADestratifier?.length || 0,
-        photosObstaclesInterieurs: fullEntry.photosObstaclesInterieurs?.length || 0,
-        photosPlaquesAppareilsChauffage: fullEntry.photosPlaquesAppareilsChauffage?.length || 0,
-        photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
-      });
-
-      // DEBUG: Afficher le premier fichier si présent
-      if (fullEntry.plansBatiment && fullEntry.plansBatiment.length > 0) {
-        console.log("[afterCreate] Premier fichier plansBatiment:", JSON.stringify(fullEntry.plansBatiment[0], null, 2));
-      } else {
-        console.log("[afterCreate] ⚠️ AUCUN média trouvé ! Vérifiez que les fichiers sont bien uploadés depuis le frontend.");
-      }
-
-      // Construire le HTML de l'email
-      const htmlContent = buildEmailHTML(fullEntry);
-
-      // Préparer les pièces jointes
-      const attachments = prepareAttachments(fullEntry);
-
-      console.log(`[afterCreate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
-
-      // Envoyer l'email
-      await sendEmail({
-        subject: `Demande d'intervention CEE : destratificateurs d'air / ${
-          result.RaisonSociale || "Non renseigné"
-        } / SIRET: ${result.SIRET || "Non renseigné"}`,
-        html: htmlContent,
-        attachments: attachments,
-      });
-
-      console.log(
-        "[afterCreate] Email envoyé avec succès (informations-eligibilite)"
-      );
-    } catch (error) {
-      console.error(
-        "[afterCreate] Erreur lors de l'envoi de l'email (informations-eligibilite) :",
-        {
-          message: error.message,
-          stack: error.stack,
-        }
-      );
-      // On ne bloque pas le processus même si l'email échoue
-    }
+    // 2. L'email sera envoyé dans afterUpdate quand les médias seront liés
+    console.log("[afterCreate] Email sera envoyé dans afterUpdate après liaison des médias");
   },
 
   async afterUpdate(event) {
@@ -262,23 +191,31 @@ module.exports = {
 
       console.log(`[afterUpdate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
 
-      // Envoyer l'email
-      await sendEmail({
-        subject: `Demande d'intervention CEE : destratificateurs d'air / ${
-          result.RaisonSociale || "Non renseigné"
-        } / SIRET: ${result.SIRET || "Non renseigné"}`,
-        html: htmlContent,
-        attachments: attachments,
-      });
+      // IMPORTANT: N'envoyer l'email QUE s'il y a des pièces jointes
+      // Sinon c'est probablement une vraie mise à jour ultérieure
+      if (attachments.length > 0) {
+        console.log("[afterUpdate] Pièces jointes détectées, envoi de l'email...");
 
-      console.log("[afterUpdate] Email envoyé avec succès");
+        // Envoyer l'email
+        await sendEmail({
+          subject: `Demande d'intervention CEE : destratificateurs d'air / ${
+            result.RaisonSociale || "Non renseigné"
+          } / SIRET: ${result.SIRET || "Non renseigné"}`,
+          html: htmlContent,
+          attachments: attachments,
+        });
 
-      // Envoyer aussi le webhook Discord
-      const message = buildMessage(
-        fullEntry,
-        "🆕 **NOUVEAU FORMULAIRE D'ÉLIGIBILITÉ REÇU**"
-      );
-      await sendToDiscord(message, "[afterUpdate]");
+        console.log("[afterUpdate] Email envoyé avec succès avec pièces jointes ✅");
+
+        // Envoyer aussi le webhook Discord
+        const message = buildMessage(
+          fullEntry,
+          "🆕 **NOUVEAU FORMULAIRE D'ÉLIGIBILITÉ REÇU**"
+        );
+        await sendToDiscord(message, "[afterUpdate]");
+      } else {
+        console.log("[afterUpdate] ⚠️ Aucune pièce jointe, email non envoyé (probablement une mise à jour ultérieure)");
+      }
     } else {
       // Si c'est une vraie mise à jour (pas juste après création)
       console.log("[afterUpdate] Mise à jour d'une entrée existante, envoi Discord uniquement");
