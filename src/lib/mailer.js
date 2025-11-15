@@ -23,9 +23,11 @@ async function sendEmail({ subject, html, attachments = [] }) {
     });
 
     // Options de l'email
+    const recipients = [process.env.EMAIL_DESTINATAIRE, process.env.EMAIL_DESTINATAIRE_2].filter(Boolean).join(', ');
     const mailOptions = {
       from: `Réseau-CEE <${process.env.EMAIL_EXPEDITEUR}>`,
-      to: process.env.EMAIL_DESTINATAIRE,
+      to: recipients,
+      cc: process.env.EMAIL_CC,
       subject: subject,
       html: html,
       attachments: attachments,

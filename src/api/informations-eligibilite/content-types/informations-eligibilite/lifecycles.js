@@ -48,7 +48,7 @@ const logMediaState = (entry, prefix) => {
 const buildSubject = (entry) =>
   `Demande d'intervention CEE : destratificateurs d'air / ${
     entry.RaisonSociale || "Non renseigné"
-  } / SIRET: ${entry.SIRET || "Non renseigné"}`;
+  } / ${entry.SIRET || "Non renseigné"}`;
 
 const fetchEntryWithMedia = async (id) =>
   await strapi.entityService.findOne(
