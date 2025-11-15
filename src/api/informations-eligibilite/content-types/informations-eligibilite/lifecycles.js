@@ -18,6 +18,82 @@ const formatMedia = (media) => {
   return "1 fichier";
 };
 
+const MEDIA_FIELDS = [
+  "plansBatiment",
+  "photosPlafondsCharpente",
+  "photosCoinsBatiment",
+  "photosZonesADestratifier",
+  "photosObstaclesInterieurs",
+  "photosPlaquesAppareilsChauffage",
+  "photosExterieursBatiment",
+];
+
+const MEDIA_POPULATE = MEDIA_FIELDS.reduce((acc, field) => {
+  acc[field] = true;
+  return acc;
+}, {});
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const logMediaState = (entry, prefix) => {
+  const stats = MEDIA_FIELDS.reduce((acc, field) => {
+    const value = entry[field];
+    acc[field] = Array.isArray(value) ? value.length : value ? 1 : 0;
+    return acc;
+  }, {});
+
+  console.log(`${prefix} état des médias :`, stats);
+};
+
+const buildSubject = (entry) =>
+  `Demande d'intervention CEE : destratificateurs d'air / ${
+    entry.RaisonSociale || "Non renseigné"
+  } / SIRET: ${entry.SIRET || "Non renseigné"}`;
+
+const fetchEntryWithMedia = async (id) =>
+  await strapi.entityService.findOne(
+    "api::informations-eligibilite.informations-eligibilite",
+    id,
+    {
+      populate: MEDIA_POPULATE,
+    }
+  );
+
+const sendEmailWhenMediaReady = async (result) => {
+  const MAX_ATTEMPTS = 5;
+  const INITIAL_DELAY_MS = 2000;
+  const RETRY_DELAY_MS = 2000;
+
+  await wait(INITIAL_DELAY_MS);
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const fullEntry = await fetchEntryWithMedia(result.id);
+    logMediaState(fullEntry, `[afterCreate][tentative ${attempt}/${MAX_ATTEMPTS}]`);
+
+    const attachments = prepareAttachments(fullEntry);
+
+    if (attachments.length > 0 || attempt === MAX_ATTEMPTS) {
+      const htmlContent = buildEmailHTML(fullEntry);
+
+      await sendEmail({
+        subject: buildSubject(fullEntry),
+        html: htmlContent,
+        attachments,
+      });
+
+      console.log(
+        `[afterCreate] Email envoyé après ${attempt} tentative(s) (${attachments.length} PJ)`
+      );
+      return;
+    }
+
+    console.log(
+      `[afterCreate] Aucune PJ détectée. Nouvelle tentative dans ${RETRY_DELAY_MS}ms`
+    );
+    await wait(RETRY_DELAY_MS);
+  }
+};
+
 const buildMessage = (result, context) => `
 ${context}
 
@@ -131,62 +207,13 @@ module.exports = {
     );
     await sendToDiscord(message, "[afterCreate]");
 
-    // 2. Envoi de l'email avec Nodemailer (après délai pour les médias)
-    try {
-      console.log("[afterCreate] Attente de 10 secondes pour que Strapi Cloud lie les médias...");
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
-      // Récupérer l'entrée complète avec les médias
-      const fullEntry = await strapi.entityService.findOne(
-        "api::informations-eligibilite.informations-eligibilite",
-        result.id,
-        {
-          populate: {
-            plansBatiment: true,
-            photosPlafondsCharpente: true,
-            photosCoinsBatiment: true,
-            photosZonesADestratifier: true,
-            photosObstaclesInterieurs: true,
-            photosPlaquesAppareilsChauffage: true,
-            photosExterieursBatiment: true,
-          },
-        }
-      );
-
-      console.log("[afterCreate] Médias récupérés:", {
-        plansBatiment: fullEntry.plansBatiment?.length || 0,
-        photosPlafondsCharpente: fullEntry.photosPlafondsCharpente?.length || 0,
-        photosCoinsBatiment: fullEntry.photosCoinsBatiment?.length || 0,
-        photosZonesADestratifier: fullEntry.photosZonesADestratifier?.length || 0,
-        photosObstaclesInterieurs: fullEntry.photosObstaclesInterieurs?.length || 0,
-        photosPlaquesAppareilsChauffage: fullEntry.photosPlaquesAppareilsChauffage?.length || 0,
-        photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
+    // 2. Planification de l'envoi d'email AVEC pièces jointes lorsque Strapi aura fini l'upload
+    sendEmailWhenMediaReady(result).catch((error) => {
+      console.error("[afterCreate] Erreur lors de l'envoi différé de l'email:", {
+        message: error.message,
+        stack: error.stack,
       });
-
-      // Préparer les pièces jointes
-      const attachments = prepareAttachments(fullEntry);
-      console.log(`[afterCreate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
-
-      if (attachments.length > 0) {
-        // Construire le HTML de l'email
-        const htmlContent = buildEmailHTML(fullEntry);
-
-        // Envoyer l'email
-        await sendEmail({
-          subject: `Demande d'intervention CEE : destratificateurs d'air / ${
-            result.RaisonSociale || "Non renseigné"
-          } / SIRET: ${result.SIRET || "Non renseigné"}`,
-          html: htmlContent,
-          attachments: attachments,
-        });
-
-        console.log("[afterCreate] ✅ Email envoyé avec succès avec pièces jointes");
-      } else {
-        console.log("[afterCreate] ⚠️ Aucune pièce jointe trouvée après 10s, email non envoyé");
-      }
-    } catch (error) {
-      console.error("[afterCreate] Erreur lors de l'envoi de l'email:", error);
-    }
+    });
   },
 
   async afterUpdate(event) {
