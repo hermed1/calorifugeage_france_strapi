@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { sendEmail, buildEmailHTML, prepareAttachments } = require("../../../../lib/mailer");
 
 const formatValue = (value) => value || "Non renseigné";
 const formatBoolean = (value) => {
@@ -100,12 +101,40 @@ module.exports = {
   async afterCreate(event) {
     console.log("[afterCreate] informations-eligibilite triggered", event.result);
 
+    const { result } = event;
+
+    // 1. Envoi du webhook Discord (existant)
     const message = buildMessage(
-      event.result,
+      result,
       "🆕 **NOUVEAU FORMULAIRE D'ÉLIGIBILITÉ REÇU**"
     );
-
     await sendToDiscord(message, "[afterCreate]");
+
+    // 2. Envoi de l'email avec Nodemailer
+    try {
+      console.log("[afterCreate] Préparation de l'email...");
+
+      // Construire le HTML de l'email
+      const htmlContent = buildEmailHTML(result);
+
+      // Préparer les pièces jointes
+      const attachments = prepareAttachments(result);
+
+      // Envoyer l'email
+      await sendEmail({
+        subject: `Nouveau formulaire d'éligibilité - ${result.RaisonSociale || "Sans nom"}`,
+        html: htmlContent,
+        attachments: attachments,
+      });
+
+      console.log("[afterCreate] Email envoyé avec succès (informations-eligibilite)");
+    } catch (error) {
+      console.error("[afterCreate] Erreur lors de l'envoi de l'email (informations-eligibilite) :", {
+        message: error.message,
+        stack: error.stack,
+      });
+      // On ne bloque pas le processus même si l'email échoue
+    }
   },
 
   async afterUpdate(event) {
