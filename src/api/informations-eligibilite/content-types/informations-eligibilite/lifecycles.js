@@ -140,7 +140,15 @@ module.exports = {
         "api::informations-eligibilite.informations-eligibilite",
         result.id,
         {
-          populate: "*",
+          populate: {
+            plansBatiment: true,
+            photosPlafondsCharpente: true,
+            photosCoinsBatiment: true,
+            photosZonesADestratifier: true,
+            photosObstaclesInterieurs: true,
+            photosPlaquesAppareilsChauffage: true,
+            photosExterieursBatiment: true,
+          },
         }
       );
 
