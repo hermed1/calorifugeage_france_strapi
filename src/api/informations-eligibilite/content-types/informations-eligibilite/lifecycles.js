@@ -1,5 +1,9 @@
 const axios = require("axios");
-const { sendEmail, buildEmailHTML, prepareAttachments } = require("../../../../lib/mailer");
+const {
+  sendEmail,
+  buildEmailHTML,
+  prepareAttachments,
+} = require("../../../../lib/mailer");
 
 const formatValue = (value) => value || "Non renseigné";
 const formatBoolean = (value) => {
@@ -8,7 +12,8 @@ const formatBoolean = (value) => {
   return "Non renseigné";
 };
 const formatMedia = (media) => {
-  if (!media || (Array.isArray(media) && media.length === 0)) return "Aucun fichier";
+  if (!media || (Array.isArray(media) && media.length === 0))
+    return "Aucun fichier";
   if (Array.isArray(media)) return `${media.length} fichier(s)`;
   return "1 fichier";
 };
@@ -33,10 +38,14 @@ ${context}
 - Consigne température : ${formatValue(result.consigneTemperature)}
 - Bâtiment zones multiples : ${formatBoolean(result.batimentZonesMultiples)}
 - Détails zones : ${formatValue(result.batimentZonesDetails)}
-- Âge bâtiment : ${formatValue(result.ageBatiment)}
+- Année de construction du bâtiment : ${formatValue(
+  result.anneeConstructionBatiment
+)}
 
 **📐 GÉOMÉTRIE**
-- Hauteur moyenne sous plafond : ${formatValue(result.hauteurMoyenneSousPlafond)}
+- Hauteur moyenne sous plafond : ${formatValue(
+  result.hauteurMoyenneSousPlafond
+)}
 - Hauteur max sous plafond : ${formatValue(result.hauteurMaxSousPlafond)}
 - Longueur local : ${formatValue(result.longueurLocal)}
 - Largeur local : ${formatValue(result.largeurLocal)}
@@ -51,8 +60,12 @@ ${context}
 **🔥 CHAUFFAGE**
 - Type production chauffage : ${formatValue(result.typeProductionChauffage)}
 - Nombre chaudières : ${formatValue(result.nombreChaudieres)}
-- Puissance nominale par appareil : ${formatValue(result.puissanceNominaleParAppareil)}
-- Puissance totale génération : ${formatValue(result.puissanceTotalaeGeneration)}
+- Puissance nominale par appareil : ${formatValue(
+  result.puissanceNominaleParAppareil
+)}
+- Puissance totale génération : ${formatValue(
+  result.puissanceTotalaeGeneration
+)}
 - Type chauffage : ${formatValue(result.typeChauffage)}
 - Type appareils chauffage : ${formatValue(result.typeAppareilsChauffage)}
 - Nombre appareils par type : ${formatValue(result.nombreAppareilsParType)}
@@ -73,7 +86,9 @@ ${context}
 - Photos coins bâtiment : ${formatMedia(result.photosCoinsBatiment)}
 - Photos zones à déstratifier : ${formatMedia(result.photosZonesADestratifier)}
 - Photos obstacles intérieurs : ${formatMedia(result.photosObstaclesInterieurs)}
-- Photos plaques appareils : ${formatMedia(result.photosPlaquesAppareilsChauffage)}
+- Photos plaques appareils : ${formatMedia(
+  result.photosPlaquesAppareilsChauffage
+)}
 - Photos extérieurs : ${formatMedia(result.photosExterieursBatiment)}
 
 **💬 COMMENTAIRE**
@@ -87,7 +102,10 @@ const sendToDiscord = async (message, logPrefix) => {
     const response = await axios.post(discordWebhookUrl, {
       content: message,
     });
-    console.log(`${logPrefix} Discord webhook envoyé (informations-eligibilite). Statut :`, response.status);
+    console.log(
+      `${logPrefix} Discord webhook envoyé (informations-eligibilite). Statut :`,
+      response.status
+    );
   } catch (error) {
     console.error(`${logPrefix} Erreur Discord (informations-eligibilite) :`, {
       status: error.response?.status,
@@ -99,7 +117,10 @@ const sendToDiscord = async (message, logPrefix) => {
 
 module.exports = {
   async afterCreate(event) {
-    console.log("[afterCreate] informations-eligibilite triggered", event.result);
+    console.log(
+      "[afterCreate] informations-eligibilite triggered",
+      event.result
+    );
 
     const { result } = event;
 
@@ -122,23 +143,33 @@ module.exports = {
 
       // Envoyer l'email
       await sendEmail({
-        subject: `Nouveau formulaire d'éligibilité - ${result.RaisonSociale || "Sans nom"}`,
+        subject: `Demande d'intervention CEE : destratificateurs d'air / ${
+          result.RaisonSociale || "Non renseigné"
+        } / SIRET: ${result.SIRET || "Non renseigné"}`,
         html: htmlContent,
         attachments: attachments,
       });
 
-      console.log("[afterCreate] Email envoyé avec succès (informations-eligibilite)");
+      console.log(
+        "[afterCreate] Email envoyé avec succès (informations-eligibilite)"
+      );
     } catch (error) {
-      console.error("[afterCreate] Erreur lors de l'envoi de l'email (informations-eligibilite) :", {
-        message: error.message,
-        stack: error.stack,
-      });
+      console.error(
+        "[afterCreate] Erreur lors de l'envoi de l'email (informations-eligibilite) :",
+        {
+          message: error.message,
+          stack: error.stack,
+        }
+      );
       // On ne bloque pas le processus même si l'email échoue
     }
   },
 
   async afterUpdate(event) {
-    console.log("[afterUpdate] informations-eligibilite triggered", event.result);
+    console.log(
+      "[afterUpdate] informations-eligibilite triggered",
+      event.result
+    );
 
     const message = buildMessage(
       event.result,

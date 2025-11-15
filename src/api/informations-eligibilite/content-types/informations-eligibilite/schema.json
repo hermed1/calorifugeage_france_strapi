@@ -71,7 +71,7 @@
       "type": "text",
       "maxLength": 1500
     },
-    "ageBatiment": {
+    "anneeConstructionBatiment": {
       "type": "string",
       "maxLength": 50
     },

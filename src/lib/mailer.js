@@ -184,8 +184,8 @@ function buildEmailHTML(formData) {
     <span class="field-value">${formatValue(formData.batimentZonesDetails)}</span>
   </div>
   <div class="field">
-    <span class="field-label">Âge bâtiment :</span>
-    <span class="field-value">${formatValue(formData.ageBatiment)}</span>
+    <span class="field-label">Année de construction du bâtiment :</span>
+    <span class="field-value">${formatValue(formData.anneeConstructionBatiment)}</span>
   </div>
 
   <h2>📐 GÉOMÉTRIE</h2>
@@ -360,19 +360,27 @@ function prepareAttachments(formData) {
 
     if (media && Array.isArray(media) && media.length > 0) {
       // Si c'est un tableau de médias
-      media.forEach((file) => {
+      media.forEach((file, index) => {
         if (file && file.url) {
+          const fileUrl = file.url.startsWith('http')
+            ? file.url
+            : `${process.env.STRAPI_URL || "http://localhost:1337"}${file.url}`;
+
           attachments.push({
-            filename: file.name || `${fieldName}_${file.id}`,
-            href: `${process.env.STRAPI_URL || "http://localhost:1337"}${file.url}`,
+            filename: file.name || `${fieldName}_${index + 1}_${file.hash}${file.ext}`,
+            path: fileUrl,
           });
         }
       });
     } else if (media && media.url) {
       // Si c'est un seul média
+      const fileUrl = media.url.startsWith('http')
+        ? media.url
+        : `${process.env.STRAPI_URL || "http://localhost:1337"}${media.url}`;
+
       attachments.push({
-        filename: media.name || `${fieldName}_${media.id}`,
-        href: `${process.env.STRAPI_URL || "http://localhost:1337"}${media.url}`,
+        filename: media.name || `${fieldName}_${media.hash}${media.ext}`,
+        path: fileUrl,
       });
     }
   });
