@@ -212,11 +212,81 @@ module.exports = {
       event.result
     );
 
-    const message = buildMessage(
-      event.result,
-      "✏️ **FORMULAIRE D'ÉLIGIBILITÉ MIS À JOUR**"
-    );
+    const { result } = event;
 
-    await sendToDiscord(message, "[afterUpdate]");
+    // Vérifier si l'entrée vient juste d'être créée (created il y a moins de 30 secondes)
+    const createdAt = new Date(result.createdAt);
+    const now = new Date();
+    const diffInSeconds = (now - createdAt) / 1000;
+    const isRecentlyCreated = diffInSeconds < 30;
+
+    console.log(`[afterUpdate] Entrée créée il y a ${diffInSeconds.toFixed(0)} secondes`);
+
+    // Si c'est une mise à jour juste après création (probablement les médias qui ont été ajoutés)
+    if (isRecentlyCreated) {
+      console.log("[afterUpdate] Entrée récemment créée, probablement ajout de médias. Envoi de l'email...");
+
+      // Récupérer l'entrée complète avec les médias
+      const fullEntry = await strapi.entityService.findOne(
+        "api::informations-eligibilite.informations-eligibilite",
+        result.id,
+        {
+          populate: {
+            plansBatiment: true,
+            photosPlafondsCharpente: true,
+            photosCoinsBatiment: true,
+            photosZonesADestratifier: true,
+            photosObstaclesInterieurs: true,
+            photosPlaquesAppareilsChauffage: true,
+            photosExterieursBatiment: true,
+          },
+        }
+      );
+
+      console.log("[afterUpdate] Médias récupérés:", {
+        id: fullEntry.id,
+        plansBatiment: fullEntry.plansBatiment?.length || 0,
+        photosPlafondsCharpente: fullEntry.photosPlafondsCharpente?.length || 0,
+        photosCoinsBatiment: fullEntry.photosCoinsBatiment?.length || 0,
+        photosZonesADestratifier: fullEntry.photosZonesADestratifier?.length || 0,
+        photosObstaclesInterieurs: fullEntry.photosObstaclesInterieurs?.length || 0,
+        photosPlaquesAppareilsChauffage: fullEntry.photosPlaquesAppareilsChauffage?.length || 0,
+        photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
+      });
+
+      // Construire le HTML de l'email
+      const htmlContent = buildEmailHTML(fullEntry);
+
+      // Préparer les pièces jointes
+      const attachments = prepareAttachments(fullEntry);
+
+      console.log(`[afterUpdate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
+
+      // Envoyer l'email
+      await sendEmail({
+        subject: `Demande d'intervention CEE : destratificateurs d'air / ${
+          result.RaisonSociale || "Non renseigné"
+        } / SIRET: ${result.SIRET || "Non renseigné"}`,
+        html: htmlContent,
+        attachments: attachments,
+      });
+
+      console.log("[afterUpdate] Email envoyé avec succès");
+
+      // Envoyer aussi le webhook Discord
+      const message = buildMessage(
+        fullEntry,
+        "🆕 **NOUVEAU FORMULAIRE D'ÉLIGIBILITÉ REÇU**"
+      );
+      await sendToDiscord(message, "[afterUpdate]");
+    } else {
+      // Si c'est une vraie mise à jour (pas juste après création)
+      console.log("[afterUpdate] Mise à jour d'une entrée existante, envoi Discord uniquement");
+      const message = buildMessage(
+        result,
+        "✏️ **FORMULAIRE D'ÉLIGIBILITÉ MIS À JOUR**"
+      );
+      await sendToDiscord(message, "[afterUpdate]");
+    }
   },
 };
