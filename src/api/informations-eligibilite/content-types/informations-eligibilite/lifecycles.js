@@ -60,9 +60,9 @@ const fetchEntryWithMedia = async (id) =>
   );
 
 const sendEmailWhenMediaReady = async (result) => {
-  const MAX_ATTEMPTS = 5;
-  const INITIAL_DELAY_MS = 2000;
-  const RETRY_DELAY_MS = 2000;
+  const MAX_ATTEMPTS = 10;
+  const INITIAL_DELAY_MS = 5000;
+  const RETRY_DELAY_MS = 3000;
 
   await wait(INITIAL_DELAY_MS);
 
