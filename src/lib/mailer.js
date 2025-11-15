@@ -59,6 +59,44 @@ function buildEmailHTML(formData) {
     return "1 fichier";
   };
 
+  const formatFileSize = (bytes) => {
+    if (typeof bytes !== "number" || Number.isNaN(bytes)) return null;
+    if (bytes === 0) return "0 o";
+    const k = 1024;
+    const sizes = ["o", "Ko", "Mo", "Go"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const value = Math.round((bytes / Math.pow(k, i)) * 10) / 10;
+    return `${value} ${sizes[i]}`;
+  };
+
+  const toMediaArray = (media) => {
+    if (!media) return [];
+    if (Array.isArray(media)) return media;
+    return [media];
+  };
+
+  const buildMediaLinks = (media) => {
+    const files = toMediaArray(media);
+    if (files.length === 0) return "";
+
+    const items = files
+      .map((file) => {
+        if (!file || !file.url) return null;
+        const absoluteUrl = file.url.startsWith("http")
+          ? file.url
+          : `${process.env.STRAPI_URL || "http://localhost:1337"}${file.url}`;
+        const name = file.name || `${file.hash || "fichier"}${file.ext || ""}`;
+        const sizeLabel = formatFileSize(file.size);
+        const label = sizeLabel ? `${name} (${sizeLabel})` : name;
+        return `<li><a href="${absoluteUrl}" target="_blank" rel="noopener noreferrer">${label}</a></li>`;
+      })
+      .filter(Boolean)
+      .join("");
+
+    if (!items) return "";
+    return `<ul class="media-links">${items}</ul>`;
+  };
+
   return `
 <!DOCTYPE html>
 <html>
@@ -116,6 +154,21 @@ function buildEmailHTML(formData) {
       text-align: center;
       color: #7f8c8d;
       font-size: 12px;
+    }
+    .media-links {
+      margin: 6px 0 0 16px;
+      padding-left: 16px;
+      color: #2c3e50;
+    }
+    .media-links li {
+      margin-bottom: 4px;
+    }
+    .media-links a {
+      color: #2980b9;
+      text-decoration: none;
+    }
+    .media-links a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -296,30 +349,37 @@ function buildEmailHTML(formData) {
   <div class="field">
     <span class="field-label">Plans bâtiment :</span>
     <span class="field-value">${formatMedia(formData.plansBatiment)}</span>
+    ${buildMediaLinks(formData.plansBatiment)}
   </div>
   <div class="field">
     <span class="field-label">Photos plafonds/charpente :</span>
     <span class="field-value">${formatMedia(formData.photosPlafondsCharpente)}</span>
+    ${buildMediaLinks(formData.photosPlafondsCharpente)}
   </div>
   <div class="field">
     <span class="field-label">Photos coins bâtiment :</span>
     <span class="field-value">${formatMedia(formData.photosCoinsBatiment)}</span>
+    ${buildMediaLinks(formData.photosCoinsBatiment)}
   </div>
   <div class="field">
     <span class="field-label">Photos zones à déstratifier :</span>
     <span class="field-value">${formatMedia(formData.photosZonesADestratifier)}</span>
+    ${buildMediaLinks(formData.photosZonesADestratifier)}
   </div>
   <div class="field">
     <span class="field-label">Photos obstacles intérieurs :</span>
     <span class="field-value">${formatMedia(formData.photosObstaclesInterieurs)}</span>
+    ${buildMediaLinks(formData.photosObstaclesInterieurs)}
   </div>
   <div class="field">
     <span class="field-label">Photos plaques appareils :</span>
     <span class="field-value">${formatMedia(formData.photosPlaquesAppareilsChauffage)}</span>
+    ${buildMediaLinks(formData.photosPlaquesAppareilsChauffage)}
   </div>
   <div class="field">
     <span class="field-label">Photos extérieurs :</span>
     <span class="field-value">${formatMedia(formData.photosExterieursBatiment)}</span>
+    ${buildMediaLinks(formData.photosExterieursBatiment)}
   </div>
 
   <h2>💬 COMMENTAIRE</h2>
