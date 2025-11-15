@@ -24,7 +24,7 @@ async function sendEmail({ subject, html, attachments = [] }) {
 
     // Options de l'email
     const mailOptions = {
-      from: `Calorifugeage France <${process.env.EMAIL_EXPEDITEUR}>`,
+      from: `Réseau-CEE <${process.env.EMAIL_EXPEDITEUR}>`,
       to: process.env.EMAIL_DESTINATAIRE,
       subject: subject,
       html: html,
@@ -328,7 +328,7 @@ function buildEmailHTML(formData) {
   </div>
 
   <div class="footer">
-    <p>Ce formulaire a été soumis via le site Calorifugeage France</p>
+    <p>Ce formulaire a été soumis via le site Réseau-CEE</p>
     <p>Date de réception : ${new Date().toLocaleString("fr-FR")}</p>
   </div>
 </body>
