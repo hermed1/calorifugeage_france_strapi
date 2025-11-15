@@ -131,29 +131,10 @@ module.exports = {
     );
     await sendToDiscord(message, "[afterCreate]");
 
-    // 2. L'email sera envoyé dans afterUpdate quand les médias seront liés
-    console.log("[afterCreate] Email sera envoyé dans afterUpdate après liaison des médias");
-  },
-
-  async afterUpdate(event) {
-    console.log(
-      "[afterUpdate] informations-eligibilite triggered",
-      event.result
-    );
-
-    const { result } = event;
-
-    // Vérifier si l'entrée vient juste d'être créée (created il y a moins de 30 secondes)
-    const createdAt = new Date(result.createdAt);
-    const now = new Date();
-    const diffInSeconds = (now - createdAt) / 1000;
-    const isRecentlyCreated = diffInSeconds < 30;
-
-    console.log(`[afterUpdate] Entrée créée il y a ${diffInSeconds.toFixed(0)} secondes`);
-
-    // Si c'est une mise à jour juste après création (probablement les médias qui ont été ajoutés)
-    if (isRecentlyCreated) {
-      console.log("[afterUpdate] Entrée récemment créée, probablement ajout de médias. Envoi de l'email...");
+    // 2. Envoi de l'email avec Nodemailer (après délai pour les médias)
+    try {
+      console.log("[afterCreate] Attente de 10 secondes pour que Strapi Cloud lie les médias...");
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
       // Récupérer l'entrée complète avec les médias
       const fullEntry = await strapi.entityService.findOne(
@@ -172,8 +153,7 @@ module.exports = {
         }
       );
 
-      console.log("[afterUpdate] Médias récupérés:", {
-        id: fullEntry.id,
+      console.log("[afterCreate] Médias récupérés:", {
         plansBatiment: fullEntry.plansBatiment?.length || 0,
         photosPlafondsCharpente: fullEntry.photosPlafondsCharpente?.length || 0,
         photosCoinsBatiment: fullEntry.photosCoinsBatiment?.length || 0,
@@ -183,18 +163,13 @@ module.exports = {
         photosExterieursBatiment: fullEntry.photosExterieursBatiment?.length || 0,
       });
 
-      // Construire le HTML de l'email
-      const htmlContent = buildEmailHTML(fullEntry);
-
       // Préparer les pièces jointes
       const attachments = prepareAttachments(fullEntry);
+      console.log(`[afterCreate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
 
-      console.log(`[afterUpdate] ${attachments.length} pièce(s) jointe(s) préparée(s)`);
-
-      // IMPORTANT: N'envoyer l'email QUE s'il y a des pièces jointes
-      // Sinon c'est probablement une vraie mise à jour ultérieure
       if (attachments.length > 0) {
-        console.log("[afterUpdate] Pièces jointes détectées, envoi de l'email...");
+        // Construire le HTML de l'email
+        const htmlContent = buildEmailHTML(fullEntry);
 
         // Envoyer l'email
         await sendEmail({
@@ -205,25 +180,23 @@ module.exports = {
           attachments: attachments,
         });
 
-        console.log("[afterUpdate] Email envoyé avec succès avec pièces jointes ✅");
-
-        // Envoyer aussi le webhook Discord
-        const message = buildMessage(
-          fullEntry,
-          "🆕 **NOUVEAU FORMULAIRE D'ÉLIGIBILITÉ REÇU**"
-        );
-        await sendToDiscord(message, "[afterUpdate]");
+        console.log("[afterCreate] ✅ Email envoyé avec succès avec pièces jointes");
       } else {
-        console.log("[afterUpdate] ⚠️ Aucune pièce jointe, email non envoyé (probablement une mise à jour ultérieure)");
+        console.log("[afterCreate] ⚠️ Aucune pièce jointe trouvée après 10s, email non envoyé");
       }
-    } else {
-      // Si c'est une vraie mise à jour (pas juste après création)
-      console.log("[afterUpdate] Mise à jour d'une entrée existante, envoi Discord uniquement");
-      const message = buildMessage(
-        result,
-        "✏️ **FORMULAIRE D'ÉLIGIBILITÉ MIS À JOUR**"
-      );
-      await sendToDiscord(message, "[afterUpdate]");
+    } catch (error) {
+      console.error("[afterCreate] Erreur lors de l'envoi de l'email:", error);
     }
+  },
+
+  async afterUpdate(event) {
+    console.log("[afterUpdate] informations-eligibilite triggered");
+
+    // Envoi Discord uniquement pour les vraies mises à jour
+    const message = buildMessage(
+      event.result,
+      "✏️ **FORMULAIRE D'ÉLIGIBILITÉ MIS À JOUR**"
+    );
+    await sendToDiscord(message, "[afterUpdate]");
   },
 };
